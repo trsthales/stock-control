@@ -5,6 +5,7 @@ import { SignupUserRequest } from 'src/app/models/interfaces/user/SignupUserRequ
 import { UserService } from 'src/app/services/user/user.service';
 import { CookieService } from 'ngx-cookie-service';
 import { MessageService } from 'primeng/api';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -27,10 +28,11 @@ export class HomeComponent {
   });
 
   constructor(
-    private formBuilder: FormBuilder,
-    private userService: UserService,
-    private cookieService: CookieService,
-    private messageService: MessageService
+    private readonly formBuilder: FormBuilder,
+    private readonly userService: UserService,
+    private readonly cookieService: CookieService,
+    private readonly messageService: MessageService,
+    private readonly router: Router
   ) {}
 
   onSubmitLoginForm(): void {
@@ -41,6 +43,7 @@ export class HomeComponent {
             this.cookieService.set('USER_INFO', response?.token);
             this.loginForm.reset();
             this.messageService.add({severity:'success', summary:'Login realizado com sucesso', detail:'Bem vindo!'});
+            this.router.navigate(['/dashboard']);
           }
         },
         error: (error) => {
