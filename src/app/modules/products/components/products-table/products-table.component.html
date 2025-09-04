@@ -97,7 +97,8 @@
                 <p-button styleClass="p-button-info" icon="pi pi-plus"
                     label="Adicionar"
                     pTooltip="Adicionar Produto"
-                    tooltipPosition="top"></p-button>
+                    tooltipPosition="top"
+                    (onClick)="handleProductEvent(addProductEvent)"></p-button>
 
               </div>
             <th>
@@ -116,10 +117,12 @@
               <div class="flex justify-content-center gap-3 align-content-center align-items-center">
                 <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-warning"
                         pTooltip="Editar Produto"
-                        tooltipPosition="top"></button>
+                        tooltipPosition="top"
+                        (click)="handleProductEvent(editProductEvent,product?.id)"></button>
                 <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
                         pTooltip="Remover Produto"
-                        tooltipPosition="top"></button>
+                        tooltipPosition="top"
+                        (click)="handleDeleteProduct(product?.id,product?.name)"></button>
               </div>
             </td>
           </tr>
