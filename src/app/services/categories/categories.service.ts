@@ -21,6 +21,17 @@ export class CategoriesService {
 
   constructor(private httpClient: HttpClient, private cookieService: CookieService) { }
 
+  createNewCategory(requestDatas: {
+    name: string;
+  }): Observable<Array<GetCategoriesResponse>>{
+    return this.httpClient.post<Array<GetCategoriesResponse>>(
+      `${this.API_URL}/category`,
+    requestDatas,
+    this.httpOptions);
+  }
+
+
+
   getAllCategories(): Observable<Array<GetCategoriesResponse>>{
     return this.httpClient.get<Array<GetCategoriesResponse>>(
       `${this.API_URL}/categories`,
