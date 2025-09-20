@@ -8,12 +8,13 @@ import { DeleteProductResponse } from 'src/app/models/interfaces/product/respons
 import { CreateProductRequest } from 'src/app/models/interfaces/product/request/CreateProductRequest';
 import { CreateProductResponse } from 'src/app/models/interfaces/product/response/CreateProductResponse';
 import { EditProductRequest } from 'src/app/models/interfaces/product/request/EditProductRequest';
+import { SaleProductRequest } from 'src/app/models/interfaces/product/request/SaleProductRequest';
+import { SaleProductResponse } from 'src/app/models/interfaces/product/response/SaleProductResponse';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProductsService {
-
   private API_URL = enviroments.apiUrl;
   private JWT_TOKEN = this.cookieService.get('USER_INFO');
   private httpOptions = {
@@ -21,18 +22,20 @@ export class ProductsService {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${this.JWT_TOKEN}`,
     }),
-  }
+  };
 
-  constructor(private httpClient: HttpClient, private cookieService: CookieService) { }
+  constructor(
+    private httpClient: HttpClient,
+    private cookieService: CookieService
+  ) {}
 
   getAllProducts(): Observable<Array<GetAllProductsResponse>> {
-    return this.httpClient.get<Array<GetAllProductsResponse>>(
-      `${this.API_URL}/products`,
-      this.httpOptions
-    )
-    .pipe(
-      map((product) => product.filter((data) => data.amount > 0))
-    );
+    return this.httpClient
+      .get<Array<GetAllProductsResponse>>(
+        `${this.API_URL}/products`,
+        this.httpOptions
+      )
+      .pipe(map((product) => product.filter((data) => data.amount > 0)));
   }
 
   deleteProduct(product_id: string): Observable<DeleteProductResponse> {
@@ -40,21 +43,45 @@ export class ProductsService {
       `${this.API_URL}/product/delete`,
       {
         ...this.httpOptions,
-        params:{
-          product_id: product_id
-        }
+        params: {
+          product_id: product_id,
+        },
       }
-    )
+    );
   }
 
-  createProduct(requestDatas: CreateProductRequest): Observable<CreateProductResponse>{
+  createProduct(
+    requestDatas: CreateProductRequest
+  ): Observable<CreateProductResponse> {
     return this.httpClient.post<CreateProductResponse>(
-      `${this.API_URL}/product`, requestDatas, this.httpOptions);
+      `${this.API_URL}/product`,
+      requestDatas,
+      this.httpOptions
+    );
   }
 
-  editProduct(requestDatas: EditProductRequest): Observable<void>{
+  editProduct(requestDatas: EditProductRequest): Observable<void> {
     return this.httpClient.put<void>(
-      `${this.API_URL}/product/edit`, requestDatas, this.httpOptions
+      `${this.API_URL}/product/edit`,
+      requestDatas,
+      this.httpOptions
+    );
+  }
+
+  saleProduct(
+    requestDatas: SaleProductRequest
+  ): Observable<SaleProductResponse> {
+    return this.httpClient.put<SaleProductResponse>(
+      `${this.API_URL}/product/sale`,
+      {
+        amount: requestDatas?.amount,
+      },
+      {
+        ...this.httpOptions,
+        params: {
+          product_id: requestDatas?.product_id,
+        },
+      }
     );
   }
 }

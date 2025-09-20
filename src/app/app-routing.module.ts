@@ -1,5 +1,10 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import {
+  PreloadAllModules,
+  PreloadingStrategy,
+  RouterModule,
+  Routes,
+} from '@angular/router';
 import { HomeComponent } from './modules/home/home.component';
 import { AuthGuard } from './guards/auth-guard.service';
 
@@ -19,7 +24,7 @@ const routes: Routes = [
       import('./modules/dashboard/dashboard.module').then(
         (m) => m.DashboardModule
       ),
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
   },
   {
     path: 'products',
@@ -27,7 +32,7 @@ const routes: Routes = [
       import('./modules/products/products.module').then(
         (m) => m.ProductsModule
       ),
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
   },
   {
     path: 'categories',
@@ -35,12 +40,16 @@ const routes: Routes = [
       import('./modules/categories/categories.module').then(
         (m) => m.CategoriesModule
       ),
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
   },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes, {
+      preloadingStrategy: PreloadAllModules,
+    }),
+  ],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

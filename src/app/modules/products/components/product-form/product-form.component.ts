@@ -9,6 +9,7 @@ import { GetCategoriesResponse } from 'src/app/models/interfaces/categories/resp
 import { EventAction } from 'src/app/models/interfaces/product/event/EventAction';
 import { CreateProductRequest } from 'src/app/models/interfaces/product/request/CreateProductRequest';
 import { EditProductRequest } from 'src/app/models/interfaces/product/request/EditProductRequest';
+import { SaleProductRequest } from 'src/app/models/interfaces/product/request/SaleProductRequest';
 import { GetAllProductsResponse } from 'src/app/models/interfaces/product/response/GetAllProductsResponse';
 import { CategoriesService } from 'src/app/services/categories/categories.service';
 import { ProductsService } from 'src/app/services/products/products.service';
@@ -33,6 +34,8 @@ export class ProductFormComponent implements OnInit, OnDestroy {
   public addProductAction = ProductEvent.ADD_PRODUCT_EVENT;
   public editProductAction = ProductEvent.EDIT_PRODUCT_EVENT;
   public saleProductAction = ProductEvent.SALE_PRODUCT_EVENT;
+
+  public saleProductSelected!: GetAllProductsResponse;
 
   constructor(
     private categoriesService: CategoriesService,
@@ -59,10 +62,16 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     amount: [0, Validators.required],
   });
 
+  public saleProductForm = this.formBuilder.group({
+    amount: [0, Validators.required],
+    product_id: ['', Validators.required],
+  });
+
   ngOnInit(): void {
     this.productAction = this.ref.data;
 
-    if (this.productAction?.event?.action === this.editProductAction &&
+    if (
+      this.productAction?.event?.action === this.editProductAction &&
       this.productAction?.productDatas
     ) {
       this.getProductSelectedDatas(this.productAction?.event?.id as string);
@@ -85,6 +94,44 @@ export class ProductFormComponent implements OnInit, OnDestroy {
           }
         },
       });
+  }
+
+  handleSubmitSaleProduct(): void {
+    if (this.saleProductForm.value && this.saleProductForm.valid) {
+      const requestDatas: SaleProductRequest = {
+        amount: this.saleProductForm.value.amount as number,
+        product_id: this.saleProductForm.value.product_id as string,
+      };
+
+      this.productService
+        .saleProduct(requestDatas)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response) {
+              this.saleProductForm.reset();
+              this.getProductDatas();
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Sucesso',
+                detail: 'Venda efetuada com sucesso!',
+                life: 3000,
+              });
+              this.router.navigate(['/dashboard']);
+            }
+          },
+          error: (err) => {
+            console.log(err);
+            this.saleProductForm.reset();
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Erro ao efetuar venda de produtos!',
+              life: 3000,
+            });
+          },
+        });
+    }
   }
 
   handleSubmitAddProduct(): void {
