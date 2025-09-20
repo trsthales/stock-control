@@ -62,11 +62,9 @@ export class ProductFormComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.productAction = this.ref.data;
 
-    if (
-      this.productAction?.event?.action === this.editProductAction &&
+    if (this.productAction?.event?.action === this.editProductAction &&
       this.productAction?.productDatas
     ) {
-      console.log(this.productAction?.event?.id as string);
       this.getProductSelectedDatas(this.productAction?.event?.id as string);
     }
 
@@ -137,7 +135,6 @@ export class ProductFormComponent implements OnInit, OnDestroy {
         product_id: this.productAction?.event?.id,
         amount: this.editProductForm.value.amount as number,
       };
-      console.log(this.productAction?.event?.id);
       this.productService
         .editProduct(requestEditProduct)
         .pipe(takeUntil(this.destroy$))
@@ -166,16 +163,17 @@ export class ProductFormComponent implements OnInit, OnDestroy {
   }
 
   getProductSelectedDatas(productId: string): void {
-    console.log(productId);
     const allProducts = this.productAction?.productDatas;
+
     if (allProducts.length > 0) {
       const productFiltered = allProducts.filter(
         (element) => element?.id === productId
       );
+
       if (productFiltered) {
         this.productSelectedDatas = productFiltered[0];
 
-        this.editProductForm.patchValue({
+        this.editProductForm.setValue({
           name: this.productSelectedDatas?.name,
           price: this.productSelectedDatas?.price,
           amount: this.productSelectedDatas?.amount,

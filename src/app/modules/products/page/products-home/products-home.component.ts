@@ -17,7 +17,7 @@ import { ProductFormComponent } from '../../components/product-form/product-form
 export class ProductsHomeComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private ref!: DynamicDialogRef;
-  public productsDatas: Array<GetAllProductsResponse> = [];
+  public productDatas: Array<GetAllProductsResponse> = [];
 
   constructor(
     private productService: ProductsService,
@@ -36,7 +36,7 @@ export class ProductsHomeComponent implements OnInit, OnDestroy {
     const productsLoaded = this.productsDTService.getProductDatas();
 
     if (productsLoaded.length > 0) {
-      this.productsDatas = productsLoaded;
+      this.productDatas = productsLoaded;
     } else {
       this.getProductsAPI();
     }
@@ -49,7 +49,7 @@ export class ProductsHomeComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.length > 0) {
-            this.productsDatas = response;
+            this.productDatas = response;
           }
         },
         error: (err) => {
@@ -75,7 +75,7 @@ export class ProductsHomeComponent implements OnInit, OnDestroy {
         maximizable: true,
         data: {
           event: event,
-          productsDatas: this.productsDatas,
+          productDatas: this.productDatas,
         },
       });
       this.ref.onClose.pipe(takeUntil(this.destroy$)).subscribe({
